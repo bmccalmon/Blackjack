@@ -19,6 +19,10 @@ public class Card {
 		return value;
 	}
 	
+	public void setValue(int value) {
+		this.value = value;
+	}
+	
 	public Face getFace() {
 		return face;
 	}

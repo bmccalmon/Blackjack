@@ -8,9 +8,11 @@ package com.bmccalmon.Blackjack;
 
 public class App 
 {
+	
     public static void main( String[] args )
     {
     	Blackjack blackjack = new BlackjackText();
+    	blackjack.round = Round.NAMING;
     	blackjack.playRound();
     }
 }

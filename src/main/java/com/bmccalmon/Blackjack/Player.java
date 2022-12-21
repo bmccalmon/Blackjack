@@ -3,14 +3,15 @@ package com.bmccalmon.Blackjack;
 public class Player {
 	
 	private Hand playerHand;
-	private int money;
-	private int currentBet;
+	private double money;
+	private double currentBet;
 	private int wins;
 	private String name;
 	
 	public Player(String name) {
 		playerHand = new Hand();
 		this.name = name;
+		this.money = 50.0;
 	}
 	
 	public Hand getHand() {
@@ -21,19 +22,27 @@ public class Player {
 		return name;
 	}
 	
-	public int getMoney() {
+	public double getMoney() {
 		return money;
 	}
 	
-	public void setMoney(int money) {
+	public void setMoney(double money) {
 		this.money = money;
 	}
 	
-	public int getCurrentBet() {
+	public void addMoney(double money) {
+		this.money += money;
+	}
+	
+	public void removeMoney(double money) {
+		this.money -= money;
+	}
+	
+	public double getCurrentBet() {
 		return currentBet;
 	}
 	
-	public void setCurrentBet(int bet) {
+	public void setCurrentBet(double bet) {
 		this.currentBet = bet;
 	}
 	

@@ -5,25 +5,26 @@ import java.util.ArrayList;
 public class Hand {
 	
 	private ArrayList<Card> hand;
-	private int sum;
 	
 	public Hand() {
 		hand = new ArrayList<Card>();
 	}
 	
 	public int getSum() {
+		int sum = 0;
+		for (int i = 0; i < this.size(); i++) {
+			sum += this.get(i).getValue();
+		}
 		return sum;
 	}
 	
 	public void add(Card card) {
 		hand.add(card);
-		sum += card.getValue();
 	}
 	
 	public boolean remove(String name) {
 		for (int i = 0; i < hand.size(); i++) {
 			if (hand.get(i).getName().equals(name)) {
-				sum -= hand.get(i).getValue();
 				hand.remove(i);
 				return true;
 			}
@@ -32,11 +33,10 @@ public class Hand {
 	}
 	
 	public int size() {
-		return hand.size()+1;
+		return hand.size();
 	}
 	
 	public Card get(int i) {
-		i = i - 1;
 		return hand.get(i);
 	}
 

@@ -3,5 +3,7 @@ package com.bmccalmon.Blackjack;
 public enum Round {
 	NAMING,
 	BETTING,
-	DEALING
+	DEALING,
+	PLAYING,
+	DEALER_PLAYING
 }
