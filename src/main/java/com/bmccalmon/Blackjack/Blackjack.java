@@ -10,6 +10,7 @@ public abstract class Blackjack {
 	
 	public static final int MIN_BET = 2;
 	public static final int MAX_BET = 500;
+	public static final int MAX_PLAYERS = 5;
 	public static final char DOLLAR_SIGN = '$';
 	
 	public Round round;
@@ -22,7 +23,6 @@ public abstract class Blackjack {
 	
 	public Blackjack() {
 		dealer = new Player("Dealer");
-		deck = new Deck(true);
 		players = new ArrayList<Player>();
 		round = Round.NAMING;
 	}
@@ -33,16 +33,29 @@ public abstract class Blackjack {
 	
 	public void playRound() {
 		if (round == Round.NAMING) {
-			promptNames(players);
+			int numPlayers = promptNumberPlayers();
+			for (int i = 1; i <= numPlayers; i++) {
+				String name = promptPlayerName(i);
+				players.add(new Player(name));
+			}
 			round = Round.BETTING;
 			playRound();
 		}
 		else if (round == Round.BETTING) {
-			promptBet(players);
+			notifyBetting();
+			for (int i = 0; i < players.size(); i++) {
+				Player p = players.get(i);
+				if (p.getCurrentBet() != 0.0)
+					continue;
+				double bet = promptBet(p);
+				p.setCurrentBet(bet);
+				p.removeMoney(bet);
+			}
 			round = Round.DEALING;
 			playRound();
 		}
 		else if (round == Round.DEALING) {
+			deck = new Deck(true);
 			deck.shuffle();
 			// Round 1 of dealing, each player gets a card
 			for (int i = 0; i < players.size(); i++) {
@@ -54,16 +67,21 @@ public abstract class Blackjack {
 			// Round 2 of dealing, each player gets a second card
 			for (int i = 0; i < players.size(); i++) {
 				hit(players.get(i));
+				fixAces(players.get(i).getHand());
 			}
 			// Dealer gets a card face down
 			hit(dealer);
+			fixAces(dealer.getHand());
 			// If dealer has a natural, all players lose except those who have naturals
 			if (isNatural(dealer.getHand())) {
 				notifyDealerNatural();
 				for (int i = 0; i < players.size(); i++) {
 					Player p = players.get(i);
-					if (!isNatural(p.getHand()))
+					if (!isNatural(p.getHand())) {
 						p.setCurrentBet(0.0);
+						p.getHand().reset();
+						dealer.getHand().reset();
+					}
 				}
 				round = Round.BETTING;
 				playRound();
@@ -76,6 +94,7 @@ public abstract class Blackjack {
 					double won = p.getCurrentBet() * 1.5;
 					p.addMoney(won);
 					p.setCurrentBet(0.0);
+					p.getHand().reset();
 					notifyBlackjack(p, won);
 				}
 			}
@@ -98,9 +117,9 @@ public abstract class Blackjack {
 				}
 				if (isBust(p.getHand()))
 					notifyBust(p);
-				round = Round.DEALER_PLAYING;
-				playRound();
 			}
+			round = Round.DEALER_PLAYING;
+			playRound();
 		}
 		else if (round == Round.DEALER_PLAYING) {
 			notifyDealerPlaying();
@@ -111,6 +130,33 @@ public abstract class Blackjack {
 				notifyHit(c,dealer);
 			}
 			notifyDealerDone(dealer);
+			round = Round.SETTLEMENT;
+			playRound();
+		}
+		else if (round == Round.SETTLEMENT) {
+			for (int i = 0; i < players.size(); i++) {
+				Player p = players.get(i);
+				if (isBust(p.getHand())) {
+					p.setCurrentBet(0.0);
+				} else {
+					boolean beatDealer = beatDealer(p);
+					boolean tiedDealer = tiedDealer(p);
+					if (isBust(dealer.getHand()) || beatDealer) {
+						double won = p.getCurrentBet() * 2;
+						notifyBeatDealer(p, p.getHand().getSum(), won);
+						p.addMoney(won);
+						p.setCurrentBet(0.0);
+					} else if (tiedDealer) {
+						notifyTiedDealer(p, p.getHand().getSum(), p.getCurrentBet());
+					} else {
+						p.setCurrentBet(0.0);
+					}
+				}
+			  p.getHand().reset();
+			}
+			dealer.getHand().reset();
+			round = Round.BETTING;
+			playRound();
 		}
 	}
 	
@@ -149,8 +195,10 @@ public abstract class Blackjack {
 		return hadAce;
 	}
 	
-	protected abstract void promptNames(ArrayList<Player> players);
-	protected abstract void promptBet(ArrayList<Player> players);
+	protected abstract int promptNumberPlayers();
+	protected abstract String promptPlayerName(int n);
+	protected abstract void notifyBetting();
+	protected abstract double promptBet(Player player);
 	protected abstract void notifyBlackjack(Player player, double amtWon);
 	protected abstract void notifyDealerNatural();
 	protected abstract void notifyBust(Player player);
@@ -159,5 +207,7 @@ public abstract class Blackjack {
 	protected abstract void notifyDealerPlaying();
 	protected abstract void notifyDealerUnknownFlip(Player dealer);
 	protected abstract void notifyDealerDone(Player dealer);
+	protected abstract void notifyBeatDealer(Player player, int sum, double money);
+	protected abstract void notifyTiedDealer(Player player, int sum, double pushed);
 	
 }

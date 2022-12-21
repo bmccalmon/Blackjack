@@ -6,33 +6,39 @@ import java.util.Scanner;
 public class BlackjackText extends Blackjack {
 	
 	@Override
-	protected void promptNames(ArrayList<Player> players) {
+	protected int promptNumberPlayers() {
 		Scanner input = new Scanner(System.in);
-		System.out.print("How many players are playing? ");
-		int numPlayers = input.nextInt();
-		for (int i = 1; i <= numPlayers; i++) {
-			System.out.print("Player " + i + " name: ");
-			players.add(new Player(input.next()));
+		int numPlayers = -1;
+		while (numPlayers < 1 || numPlayers > Blackjack.MAX_PLAYERS) {
+			System.out.print("How many players are playing? ");
+			numPlayers = input.nextInt();
 		}
+		return numPlayers;
 	}
-
+	
 	@Override
-	protected void promptBet(ArrayList<Player> players) {
+	protected String promptPlayerName(int n) {
 		Scanner input = new Scanner(System.in);
+		System.out.print("Player " + n + " name: ");
+		String name = input.next();
+		return name;
+	}
+	
+	@Override
+	protected void notifyBetting() {
 		System.out.println("BETTING ROUND\tMinimum bet: " + MIN_BET + "\tMaximum bet: " + MAX_BET);
-		for (int i = 0; i < players.size(); i++) {
-			Player p = players.get(i);
-			if (p.getCurrentBet() != 0.0)
-				continue;
-			System.out.println(p.getName() + " has " + Blackjack.DOLLAR_SIGN + p.getMoney() + " in the bank.");
-			double bet = -1;
-			while (bet < MIN_BET || bet > MAX_BET || bet > p.getMoney()) {
-				System.out.print(p.getName() + "'s bet: " + Blackjack.DOLLAR_SIGN);
-				bet = input.nextDouble();
-			}
-			p.setCurrentBet(bet);
-			p.removeMoney(bet);
+	}
+	
+	@Override
+	protected double promptBet(Player player) {
+		Scanner input = new Scanner(System.in);
+		System.out.println(player.getName() + " has " + Blackjack.DOLLAR_SIGN + player.getMoney() + " in the bank.");
+		double bet = -1;
+		while (bet < MIN_BET || bet > MAX_BET || bet > player.getMoney()) {
+			System.out.print(player.getName() + "'s bet: " + Blackjack.DOLLAR_SIGN);
+			bet = input.nextDouble();
 		}
+		return bet;
 	}
 
 	@Override
@@ -90,6 +96,16 @@ public class BlackjackText extends Blackjack {
 	protected void notifyDealerDone(Player dealer) {
 		System.out.println("The Dealer is done drawing.");
 		showCards(dealer);
+	}
+	
+	@Override
+	protected void notifyBeatDealer(Player player, int sum, double money) {
+		System.out.println(player.getName() + " beat the dealer with " + sum + " and won " + Blackjack.DOLLAR_SIGN + money +"!");
+	}
+	
+	@Override
+	protected void notifyTiedDealer(Player player, int sum, double pushed) {
+		System.out.println(player.getName() + " tied the dealer with " + sum + ". Their " + Blackjack.DOLLAR_SIGN + pushed + " bet gets pushed.");
 	}
 	
 	private void showCards(Player player) {

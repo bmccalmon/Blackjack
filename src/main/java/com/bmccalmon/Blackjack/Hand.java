@@ -22,6 +22,10 @@ public class Hand {
 		hand.add(card);
 	}
 	
+	public void reset() {
+		hand.clear();
+	}
+	
 	public boolean remove(String name) {
 		for (int i = 0; i < hand.size(); i++) {
 			if (hand.get(i).getName().equals(name)) {
