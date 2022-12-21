@@ -1,6 +1,5 @@
 package com.bmccalmon.Blackjack;
 
-import java.util.ArrayList;
 import java.util.Scanner;
 
 public class BlackjackText extends Blackjack {
@@ -26,7 +25,7 @@ public class BlackjackText extends Blackjack {
 	
 	@Override
 	protected void notifyBetting() {
-		System.out.println("BETTING ROUND\tMinimum bet: " + MIN_BET + "\tMaximum bet: " + MAX_BET);
+		System.out.println("BETTING ROUND\tMinimum bet: " + Blackjack.DOLLAR_SIGN + MIN_BET + "\tMaximum bet: " + Blackjack.DOLLAR_SIGN + MAX_BET);
 	}
 	
 	@Override
@@ -60,7 +59,7 @@ public class BlackjackText extends Blackjack {
 		Scanner input = new Scanner(System.in);
 		String d = "null";
 		while (!d.equals("h") && !d.equals("s")) {
-			System.out.println(player.getName() + "'s turn. Do you want to hit (h) or stand (s)? ");
+			System.out.print(player.getName() + "'s turn. Do you want to hit (h) or stand (s)? ");
 			d = input.next();
 		}
 		if (d.equals("h")) {
