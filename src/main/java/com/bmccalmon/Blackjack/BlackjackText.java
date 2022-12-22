@@ -6,6 +6,7 @@ public class BlackjackText extends Blackjack {
 	
 	@Override
 	protected int promptNumberPlayers() {
+		@SuppressWarnings("resource")
 		Scanner input = new Scanner(System.in);
 		int numPlayers = -1;
 		while (numPlayers < 1 || numPlayers > Blackjack.MAX_PLAYERS) {
@@ -17,6 +18,7 @@ public class BlackjackText extends Blackjack {
 	
 	@Override
 	protected String promptPlayerName(int n) {
+		@SuppressWarnings("resource")
 		Scanner input = new Scanner(System.in);
 		System.out.print("Player " + n + " name: ");
 		String name = input.next();
@@ -30,6 +32,7 @@ public class BlackjackText extends Blackjack {
 	
 	@Override
 	protected double promptBet(Player player) {
+		@SuppressWarnings("resource")
 		Scanner input = new Scanner(System.in);
 		System.out.println(player.getName() + " has " + Blackjack.DOLLAR_SIGN + player.getMoney() + " in the bank.");
 		double bet = -1;
@@ -56,6 +59,7 @@ public class BlackjackText extends Blackjack {
 		System.out.println(dealer.getHand().get(0).getName() + "\nUnknown");
 		showCards(player);
 		
+		@SuppressWarnings("resource")
 		Scanner input = new Scanner(System.in);
 		String d = "null";
 		while (!d.equals("h") && !d.equals("s")) {

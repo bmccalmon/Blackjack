@@ -67,7 +67,8 @@ public class ArrayStack<T> implements StackInterface<T> {
 	  // Increases the capacity of the stack.
 	  private void grow() {
 	    // Create a new array with double the size.
-	    T[] newElements = (T[]) new Object[elements.length * 2];
+	    @SuppressWarnings("unchecked")
+		T[] newElements = (T[]) new Object[elements.length * 2];
 
 	    // Copy the old elements into the new array.
 	    for (int i = 0; i < elements.length; i++) {

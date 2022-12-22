@@ -2,6 +2,8 @@ package com.bmccalmon.Blackjack;
 
 public class Player {
 	
+	public static final double STARTING_BALANCE = 50.0;
+	
 	private Hand playerHand;
 	private double money;
 	private double currentBet;
@@ -11,7 +13,7 @@ public class Player {
 	public Player(String name) {
 		playerHand = new Hand();
 		this.name = name;
-		this.money = 50.0;
+		this.money = STARTING_BALANCE;
 	}
 	
 	public Hand getHand() {
